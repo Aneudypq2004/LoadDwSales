@@ -3,9 +3,8 @@
 using LoadDWSales.Data.Context;
 using LoadDWSales.Data.Entities.DwVentas;
 using LoadDWSales.Data.Interfaces;
-using LoadDWSales.Data.Result;
+using LoadDWSales.Data.Core;
 using Microsoft.EntityFrameworkCore;
-using System.Runtime.CompilerServices;
 
 namespace LoadDWSales.Data.Services
 {
@@ -17,7 +16,7 @@ namespace LoadDWSales.Data.Services
 
         public async Task<BaseResult> LoadDHW()
         {
-            BaseResult result = new BaseResult();
+            BaseResult result = new();
             try
             {
                 await LoadDimEmployee();
@@ -39,7 +38,7 @@ namespace LoadDWSales.Data.Services
 
         private async Task<BaseResult> LoadDimEmployee()
         {
-            BaseResult result = new BaseResult();
+            BaseResult result = new ();
 
             try
             {
@@ -68,8 +67,6 @@ namespace LoadDWSales.Data.Services
             BaseResult result = new BaseResult();
             try
             {
-     
-
                 var productCategories = await (from product in _norwindContext.Products
                                                join category in _norwindContext.Categories on product.CategoryId equals category.CategoryId
                                                select new DimProductCategory()
@@ -97,7 +94,7 @@ namespace LoadDWSales.Data.Services
             BaseResult operaction = new BaseResult() { Success = false };
             try
             {
-              
+
                 var customers = await _norwindContext.Customers.Select(cust => new DimCustomer()
                 {
                     CustomerId = cust.CustomerId,
@@ -120,8 +117,7 @@ namespace LoadDWSales.Data.Services
 
         private async Task<BaseResult> LoadDimShippers()
         {
-            BaseResult result = new BaseResult();
-
+            BaseResult result = new ();
             try
             {
                 var shippers = await _norwindContext.Shippers.Select(ship => new DimShipper()
@@ -130,7 +126,6 @@ namespace LoadDWSales.Data.Services
                     ShipperName = ship.CompanyName
                 }).ToListAsync();
 
-
                 await _salesContext.DimShippers.AddRangeAsync(shippers);
                 await _salesContext.SaveChangesAsync();
             }
@@ -138,12 +133,12 @@ namespace LoadDWSales.Data.Services
             {
 
                 result.Success = false;
-                result.Message = $"Error cargando la dimension de shippers { ex.Message } ";
+                result.Message = $"Error cargando la dimension de shippers {ex.Message} ";
             }
             return result;
         }
 
-        private async Task<BaseResult> LoadFactSales() 
+        private async Task<BaseResult> LoadFactSales()
         {
             BaseResult result = new BaseResult();
 
@@ -161,10 +156,9 @@ namespace LoadDWSales.Data.Services
             return result;
         }
 
-
         private async Task<BaseResult> LoadFactCustomerServed()
         {
-            BaseResult result = new BaseResult() { Success = true };
+            BaseResult result = new() { Success = true };
 
             try
             {
@@ -177,6 +171,17 @@ namespace LoadDWSales.Data.Services
                 result.Message = $"Error cargando el fact de clientes atendidos {ex.Message} ";
             }
             return result;
+        }
+
+        private async Task ClearDimensionTables()
+        {
+            Console.WriteLine("Limpiando tablas del DataWarehouse...");
+            await _salesContext.Database.ExecuteSqlRawAsync("TRUNCATE TABLE DimCustomers");
+            await _salesContext.Database.ExecuteSqlRawAsync("TRUNCATE TABLE DimEmployees");
+            await _salesContext.Database.ExecuteSqlRawAsync("TRUNCATE TABLE DimShippers");
+            await _salesContext.Database.ExecuteSqlRawAsync("TRUNCATE TABLE DimCategories");
+            await _salesContext.Database.ExecuteSqlRawAsync("TRUNCATE TABLE DimProducts");
+            Console.WriteLine("Limpieza completada.");
         }
     }
 }

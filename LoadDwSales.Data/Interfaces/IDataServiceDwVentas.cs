@@ -1,4 +1,4 @@
-﻿using LoadDWSales.Data.Result;
+﻿using LoadDWSales.Data.Core;
 
 namespace LoadDWSales.Data.Interfaces
 {

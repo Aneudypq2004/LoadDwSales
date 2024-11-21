@@ -18,6 +18,7 @@ namespace LoadDWSales.Data.Context
         public DbSet<Shipper> Shippers { get; set; }
         public DbSet<Vwventa> Vwventas { get; set; }
         public DbSet<VwServedCustomer> VwServedCustomers { get; set; }
+
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
