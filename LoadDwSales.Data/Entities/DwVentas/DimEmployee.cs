@@ -5,12 +5,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LoadDWSales.Data.Entities.DwVentas
 {
-    [Table("DimEmployees")]
+    [Table("DimEmployee")]
     public class DimEmployee
     {
         [Key]
         public int EmployeeKey { get; set; }
-        public int EmployeeId { get; set; }
-        public string? EmployeeName { get; set; }
+        [Required]
+        public int EmployeeID { get; set; }
+        [Required]
+        public string FirstName { get; set; } = string.Empty; 
+        [Required]
+        public string LastName { get; set; } = string.Empty; 
+        public string? Title { get; set; } 
+        public DateTime? HireDate { get; set; }
     }
 }

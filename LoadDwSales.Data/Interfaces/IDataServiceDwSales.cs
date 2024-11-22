@@ -2,7 +2,7 @@
 
 namespace LoadDWSales.Data.Interfaces
 {
-    public interface IDataServiceDwVentas
+    public interface IDataServiceDwSales
     {
         Task<BaseResult> LoadDHW();
     }

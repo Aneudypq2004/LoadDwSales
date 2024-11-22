@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = Host.CreateApplicationBuilder(args);
 
-builder.Services.AddDbContextPool<NortwindContext>(options =>
-                                                     options.UseSqlServer(builder.Configuration.GetConnectionString("DbNorwind")));
+builder.Services.AddDbContext<NortwindContext>(options =>
+                                                     options.UseSqlServer(builder.Configuration.GetConnectionString("DbNorthwind")));
 
-builder.Services.AddDbContextPool<DbSalesContext>(options =>
+builder.Services.AddDbContext<DbSalesContext>(options =>
                                           options.UseSqlServer(builder.Configuration.GetConnectionString("DbSales")));
 
-builder.Services.AddScoped<IDataServiceDwVentas, DataServiceDwVentas>();
+builder.Services.AddScoped<IDataServiceDwSales, DataServiceDwSales>();
 builder.Services.AddHostedService<Worker>();
 
 var host = builder.Build();

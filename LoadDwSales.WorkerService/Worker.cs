@@ -3,7 +3,6 @@ using LoadDWSales.Data.Interfaces;
 namespace LoadDwSales.WorkerService
 {
     public class Worker(ILogger<Worker> logger,
-                  IConfiguration configuration,
                   IServiceScopeFactory scopeFactory) : BackgroundService
     {
         private readonly ILogger<Worker> _logger = logger;
@@ -19,16 +18,10 @@ namespace LoadDwSales.WorkerService
 
                 using (var scope = scopeFactory.CreateScope())
                 {
-                    var dataService = scope.ServiceProvider.GetRequiredService<IDataServiceDwVentas>();
-
+                    var dataService = scope.ServiceProvider.GetRequiredService<IDataServiceDwSales>();
                     var result = await dataService.LoadDHW();
-
-                    if (!result.Success)
-                    {
-                    }
-
                 }
-                await Task.Delay(1000, stoppingToken);
+                await Task.Delay(100000, stoppingToken);
             }
         }
     }
