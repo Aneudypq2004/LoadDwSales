@@ -17,7 +17,7 @@ namespace LoadDWSales.Data.Context
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Shipper> Shippers { get; set; }
         public DbSet<VwSales> VwSales { get; set; }
-        public DbSet<VwCustomersAttended> VwServedCustomers { get; set; }
+        public DbSet<VwCustomersAttended> VwCustomersAttended { get; set; }
 
         #endregion
 

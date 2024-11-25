@@ -13,5 +13,7 @@ namespace LoadDWSales.Data.Context
         public DbSet<DimCustomer> DimCustomers { get; set; }
         public DbSet<DimShipper> DimShippers { get; set; }
         public DbSet<DimProduct> DimProducts { get; set; }
+        public DbSet<FactCustomerAttended> FactCustomersAttended { get; set; }
+        public DbSet<FactSale> FactSales { get; set; }
     }
 }

@@ -24,9 +24,7 @@ namespace LoadDWSales.Data.Services
                 //await LoadDimShippers();
                 //await LoadDimCategory();
                 //await LoadDimProduct();
-
-
-                await LoadFactCustomersAttended();
+                //await LoadFactCustomersAttended();
                 await LoadFactSales();
             }
             catch (Exception ex)
@@ -64,7 +62,6 @@ namespace LoadDWSales.Data.Services
 
             return result;
         }
-
         private async Task<BaseResult> LoadDimEmployee()
         {
             BaseResult result = new() { Success = true };
@@ -181,36 +178,65 @@ namespace LoadDWSales.Data.Services
         }
         private async Task<BaseResult> LoadFactSales()
         {
-            BaseResult result = new();
+            BaseResult result = new() { Success = true };
+
             try
             {
-                var sales = await _northwindContext.VwSales.AsNoTracking().ToListAsync();
+                await _salesContext.Database.ExecuteSqlRawAsync("TRUNCATE TABLE FactSales");
+
+                var sales = await _northwindContext.VwSales.AsNoTracking()
+                    .Select(sale => new FactSale
+                    {
+                        CustomerId = sale.CustomerId ?? string.Empty,
+                        CustomerName = sale.CustomerName ?? string.Empty,
+                        EmployeeId = sale.EmployeeId,
+                        EmployeeName = sale.EmployeeName ?? string.Empty,
+                        ShipperId = sale.ShipperId,
+                        CompanyName = sale.CompanyName ?? string.Empty,
+                        City = sale.City ?? string.Empty,
+                        ProductId = sale.ProductId,
+                        ProductName = sale.ProductName ?? string.Empty,
+                        DateKey = sale.DateKey,
+                        Año = sale.Año,
+                        Mes = sale.Mes,
+                        TotalSales = sale.TotalSales ?? 0
+                    }).ToListAsync();
+
+                await _salesContext.FactSales.AddRangeAsync(sales);
+                await _salesContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-
                 result.Success = false;
-                result.Message = $"Error cargando el fact de ventas {ex.Message} ";
+                result.Message = $"Error cargando el fact de ventas: {ex.Message}";
             }
 
             return result;
         }
         private async Task<BaseResult> LoadFactCustomersAttended()
         {
-            BaseResult result = new() { Success = true };
-
+            BaseResult result = new();
             try
             {
-                var customerAttended = await _northwindContext.VwServedCustomers.AsNoTracking().ToListAsync();
+                await _salesContext.Database.ExecuteSqlRawAsync("TRUNCATE TABLE FactCustomersAttended");
+                var customersAttended = await _northwindContext.VwCustomersAttended.AsNoTracking()
+                    .Select(cust => new FactCustomerAttended
+                    {
+                        EmployeeId = cust.EmployeeId,
+                        EmployeeName = cust.EmployeeName ?? string.Empty,
+                        TotalCustomersServed = cust.TotalCustomersServed ?? 0
+                    }).ToListAsync();
+
+                await _salesContext.FactCustomersAttended.AddRangeAsync(customersAttended);
+                await _salesContext.SaveChangesAsync();
             }
             catch (Exception ex)
             {
-
                 result.Success = false;
-                result.Message = $"Error cargando el fact de clientes atendidos {ex.Message} ";
+                result.Message = $"Error cargando el fact de clientes atendidos: {ex.Message}";
             }
+
             return result;
         }
-
     }
 }
