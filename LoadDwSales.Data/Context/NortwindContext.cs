@@ -16,18 +16,18 @@ namespace LoadDWSales.Data.Context
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Customer> Customers { get; set; }
         public DbSet<Shipper> Shippers { get; set; }
-        public DbSet<Vwventa> Vwventas { get; set; }
-        public DbSet<VwServedCustomer> VwServedCustomers { get; set; }
+        public DbSet<VwSales> VwSales { get; set; }
+        public DbSet<VwCustomersAttended> VwServedCustomers { get; set; }
 
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<VwServedCustomer>(entity =>
+            modelBuilder.Entity<VwCustomersAttended>(entity =>
             {
                 entity
                     .HasNoKey()
-                    .ToView("VW_ServedCustomers", "DWH");
+                    .ToView("VwCustomersAttended", "dbo");
 
                 entity.Property(e => e.EmployeeId).HasColumnName("EmployeeID");
                 entity.Property(e => e.EmployeeName)
@@ -35,11 +35,11 @@ namespace LoadDWSales.Data.Context
                     .HasMaxLength(31);
             });
 
-            modelBuilder.Entity<Vwventa>(entity =>
+            modelBuilder.Entity<VwSales>(entity =>
             {
                 entity
                     .HasNoKey()
-                    .ToView("VWVentas", "DWH");
+                    .ToView("VwSales", "dbo");
 
                 entity.Property(e => e.City).HasMaxLength(15);
                 entity.Property(e => e.CompanyName)

@@ -19,11 +19,15 @@ namespace LoadDWSales.Data.Services
             BaseResult result = new() { Success = true };
             try
             {
-                await LoadDimEmployee();
-                await LoadDimCustomers();
-                await LoadDimShippers();
-                await LoadDimCategory();
-                await LoadDimProduct();
+                //await LoadDimEmployee();
+                //await LoadDimCustomers();
+                //await LoadDimShippers();
+                //await LoadDimCategory();
+                //await LoadDimProduct();
+
+
+                await LoadFactCustomersAttended();
+                await LoadFactSales();
             }
             catch (Exception ex)
             {
@@ -90,7 +94,6 @@ namespace LoadDWSales.Data.Services
 
             return result;
         }
-
         private async Task<BaseResult> LoadDimShippers()
         {
             BaseResult result = new() { Success = true };
@@ -118,7 +121,6 @@ namespace LoadDWSales.Data.Services
 
             return result;
         }
-
         private async Task<BaseResult> LoadDimCategory()
         {
             BaseResult result = new() { Success = true };
@@ -146,7 +148,6 @@ namespace LoadDWSales.Data.Services
 
             return result;
         }
-
         private async Task<BaseResult> LoadDimProduct()
         {
             BaseResult result = new() { Success = true };
@@ -178,14 +179,12 @@ namespace LoadDWSales.Data.Services
 
             return result;
         }
-
         private async Task<BaseResult> LoadFactSales()
         {
             BaseResult result = new();
-
             try
             {
-                var ventas = await _northwindContext.Vwventas.AsNoTracking().ToListAsync();
+                var sales = await _northwindContext.VwSales.AsNoTracking().ToListAsync();
             }
             catch (Exception ex)
             {
@@ -196,13 +195,13 @@ namespace LoadDWSales.Data.Services
 
             return result;
         }
-        private async Task<BaseResult> LoadFactCustomerServed()
+        private async Task<BaseResult> LoadFactCustomersAttended()
         {
             BaseResult result = new() { Success = true };
 
             try
             {
-                var customerServed = await _northwindContext.VwServedCustomers.AsNoTracking().ToListAsync();
+                var customerAttended = await _northwindContext.VwServedCustomers.AsNoTracking().ToListAsync();
             }
             catch (Exception ex)
             {
@@ -212,15 +211,6 @@ namespace LoadDWSales.Data.Services
             }
             return result;
         }
-        private async Task ClearDimensionTables()
-        {
-            Console.WriteLine("Limpiando tablas del DataWarehouse...");
-            await _salesContext.Database.ExecuteSqlRawAsync("TRUNCATE TABLE DimCustomers");
-            await _salesContext.Database.ExecuteSqlRawAsync("TRUNCATE TABLE DimEmployees");
-            await _salesContext.Database.ExecuteSqlRawAsync("TRUNCATE TABLE DimShippers");
-            await _salesContext.Database.ExecuteSqlRawAsync("TRUNCATE TABLE DimCategories");
-            await _salesContext.Database.ExecuteSqlRawAsync("TRUNCATE TABLE DimProducts");
-            Console.WriteLine("Limpieza completada.");
-        }
+
     }
 }
